@@ -1,0 +1,62 @@
+import java.util.*;
+
+public class Factory {
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        //Read the number of jobs and job details from the user input.
+        System.out.println("Enter the number of Jobs");
+        int n = scan.nextInt();
+        int[][] jobs = new int[n][3];
+        System.out.println("Enter job start time, end time, and earnings");
+        for (int i = 0; i < n; i++) {
+            jobs[i][0] = scan.nextInt();
+            jobs[i][1] = scan.nextInt();
+            jobs[i][2] = scan.nextInt();
+        }
+        // sort jobs by end time
+        Arrays.sort(jobs, (a, b) -> a[1] - b[1]); 
+        int maxEarnings = 0;
+        List<int[]> selectedJobs = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            int currentEarnings = jobs[i][2];
+            int previousJobEnd = jobs[i][0];
+            for (int j = i + 1; j < n; j++) {
+                if (jobs[j][0] >= previousJobEnd) {
+                    currentEarnings += jobs[j][2];
+                    previousJobEnd = jobs[j][1];
+                }
+            }
+            if (currentEarnings > maxEarnings) {
+                maxEarnings = currentEarnings;
+                selectedJobs.clear();
+                selectedJobs.add(jobs[i]);
+            } else if (currentEarnings == maxEarnings) {
+                selectedJobs.add(jobs[i]);
+            }
+        }
+        int tasksLeft = n - selectedJobs.size();
+        int earningsLeft = 0;
+        for (int i = 0; i < n; i++) {
+            if (!containsJob(selectedJobs, jobs[i])) {
+                earningsLeft += jobs[i][2];
+            }
+        }
+        System.out.println("The number of tasks and earnings available for others");
+        System.out.println("Task: " + tasksLeft);
+        System.out.println("Earnings: " + earningsLeft);
+    }
+
+    private static boolean containsJob(List<int[]> jobs, int[] job) {
+        for (int[] j : jobs) {
+            if (j == job) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+
+
